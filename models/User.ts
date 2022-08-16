@@ -1,119 +1,9 @@
-
-1. Set up Project with express-boilerplate
- (make sure to change the pino implementaion if you get any error)
-https://github.com/Dey-Sumit/express-boilerplate 
-
-- main -> without mongo but wrong pino
-- feature/integrate-mongo-db : with mongo but correct pino
-
-```
-import pino from "pino";
-
-const logger = pino({
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-    },
-  },
-  base: null,
-});
-
-export default logger;
-
-```
-
----
----
-
-
-2. Connect to MongoDB
-Create local file .env with the following content:
-
-```
-CLUSTER_PASSWORD = 
-CLUSER_USERNAME = sumit_twitter
-
-DB_URI = mongodb+srv://sumit_twitter:<password>@cluster-twitter-reprise.psuyxp2.mongodb.net/?retryWrites=true&w=majority
-```
-
-```
-import logger from "@libs/logger";
-import mongoose from "mongoose";
-
-const connectToDataBase = async () => {
-  try {
-    await mongoose.connect(process.env.DB_URI);
-  } catch (error) {
-    logger.error(`DB Connection error : ${error.message} `);
-  }
-
-  const connection = mongoose.connection;
-
-  if (connection.readyState >= 1) {
-    logger.info("Connected to DataBase");
-    return;
-  }
-
-  connection.on("connected", () => logger.info("Connected to DataBase"));
-
-  connection.on("error", (error) => logger.error(`DB Connection error : ${error.message} `));
-};
-export default connectToDataBase;
-
-
-```
-
-----
-----
-
-3. Create User Model with mongoose and typeScript and work on the Authentication
-- docs: https://mongoosejs.com/docs/typescript.html
-
-```
-// Interface : 
-
-import mongoose from "mongoose";
-type mongoose_id = string | mongoose.Types.ObjectId;
-
-export interface IUser {
-  _id: mongoose_id;
-  name: string;
-  username: string;
-  password: string;
-  profilePicture: string;
-  bio: string;
-  email: string;
-
-  following: mongoose_id[];
-  followers: mongoose_id[];
-  likes: mongoose_id[];
-  notifications: mongoose_id[];
-  posts: mongoose_id[];
-
-  validatePassword?: (password: string) => Promise<boolean>;
-
-  // virtual fields
-  noOfFollowers: number;
-  noOfFollowing: number;
-  noOPosts: number;
-  noOfNotifications: number;
-}
-
-``` 
-
-```
-install packages : 
-yarn add bcryptjs 
-yarn add -D @types/bcryptjs
-```
-```
 /*
 FROM DOCS :
  You as the developer are responsible for ensuring that your document interface lines up with your Mongoose schema. For example, Mongoose won't report an error if email is required in your Mongoose schema but optional in your document interface.
 
 */
-models/User.ts
+
 import bcrypt from "bcryptjs";
 import mongoose, { Schema, Document } from "mongoose";
 import { IUser } from "@libs/types";
@@ -222,12 +112,3 @@ UserSchema.pre("save", async function (this, next) {
 });
 
 export default mongoose.model<UserDocument>("User", UserSchema);
-
-```
-```
-libs/general.ts
-export const generateRandomString = () => (Math.random() + 1).toString(36).substring(4);
-```
-
----
----
