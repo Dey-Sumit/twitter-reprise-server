@@ -69,6 +69,7 @@ export default connectToDataBase;
 
 3. Create User Model with mongoose and typeScript and work on the Authentication
 - docs: https://mongoosejs.com/docs/typescript.html
+- `3-feature/user-modal`
 
 ```
 // Interface : 
