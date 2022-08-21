@@ -7,12 +7,14 @@ import { createServer } from "http";
 
 import log from "@libs/logger";
 import connectToDataBase from "utils/connect-db";
+import authRouter from "@routes/auth.routes";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 
 const app = express();
+app.use("/api/auth", authRouter);
 
 const httpServer = createServer(app);
 

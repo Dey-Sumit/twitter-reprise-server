@@ -230,5 +230,66 @@ libs/general.ts
 export const generateRandomString = () => (Math.random() + 1).toString(36).substring(4);
 ```
 
----
----
+--------
+--------
+<br/>
+
+**4. Auth -> create express routes, add controllers, and call in the index.ts**
+
+```
+=> routes/auth.routes.ts
+
+import express from "express";
+import { login, logout, me, signup } from "../controllers/auth.controller";
+
+const authRouter = express.Router();
+
+// router works on top-to-bottom, so the first route that matches will be invoked
+authRouter.get("/me", me);
+authRouter.post("/signup", signup);
+authRouter.post("/login", login);
+authRouter.delete("/logout", logout);
+
+export default authRouter;
+```
+```
+=> controllers/auth.controller.ts
+
+export const me = (req, res) => {
+  res.json({
+    message: "Hello World",
+  });
+};
+export const signup = () => {};
+export const login = () => {};
+export const logout = () => {};
+```
+
+```
+=> index.ts 
+
+import authRouter from "@routes/auth.routes";
+app.use("/api/auth", authRouter);
+
+--------------------------------------------------------------------------------
+TEST : curl http://localhost:4000/api/auth/me  
+--------------------------------------------------------------------------------
+```
+
+```
+path-alias : tsconfig.json
+
+    "baseUrl": "src",
+    "paths": {
+      "@libs/*": ["libs/*"],
+      "@utils/*": ["utils/*"],
+      "@routes/*": ["routes/*"],
+      "@controllers/*": ["controllers/*"]
+    },
+
+```
+
+5. Bring in Passport and configure it
+
+```
+```
