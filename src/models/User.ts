@@ -42,7 +42,7 @@ const UserSchema = new Schema<UserDocument>(
     password: {
       type: String,
       required: true,
-      select: false,
+      select: false, // don't return password in query results , anyway we are gonna use the toJson method to filter out the password
     },
 
     // people follow this user
@@ -94,7 +94,7 @@ UserSchema.virtual("noOfNotifications").get(function (this: UserDocument) {
   return this.notifications?.length;
 });
 
-UserSchema.methods.validatePassword = async function (enteredPassword) {
+UserSchema.methods.isValidPassword = async function (enteredPassword) {
   const user = await User.findOne({ username: this.username }).select("password");
 
   return await bcrypt.compare(enteredPassword, user.password);
@@ -109,6 +109,23 @@ UserSchema.pre("save", async function (this, next) {
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+});
+
+/* doc is the document(returned from database) to be serialized, ret(will contain all the virtual fields too) is the plain JS object that will be transformed into JSON. 
+ You may then manipulate ret however you want.
+ */
+UserSchema.set("toJSON", {
+  transform: function (doc, ret) {
+    console.log("transform called", doc, ret);
+
+    delete ret.password;
+
+    ret.id = ret._id; // id is the same as _id
+    delete ret._id; // delete the _id field from the returned object
+    delete ret.__v; // filter out the __v field
+
+    return ret;
+  },
 });
 
 export default mongoose.model<UserDocument>("User", UserSchema);

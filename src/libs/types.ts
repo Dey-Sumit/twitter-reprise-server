@@ -16,7 +16,7 @@ export interface IUser {
   notifications: mongoose_id[];
   posts: mongoose_id[];
 
-  checkPassword?: (password: string) => Promise<boolean>;
+  isValidPassword?: (password: string) => Promise<boolean>;
 
   // virtual fields
   noOfFollowers: number;
