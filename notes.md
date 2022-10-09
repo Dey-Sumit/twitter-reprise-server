@@ -547,7 +547,7 @@ UserSchema.set("toJSON", {
       res.status(201).json(req.user);
    });
 
-CHECK IF THE COOKIE IS ADDED OR NOT 🔥
+CHECK IF THE COOKIE IS ADDED OR NOT 🔥E
 ```
 
 ```
@@ -563,4 +563,40 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
 };
 
 
+```
+
+
+
+
+# Add mongo Store to persist session in the database
+
+
+
+
+
+
+
+
+# Now, move to frontend and implement this Authentication 
+- Add cors to the backend
+
+```
+yarn add cors && yarn add @types/cors -D
+
+```
+```
+
+```
+app.use(morgan("dev"));
+----
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL, // add this value in env file and in env.example file
+    credentials: true,
+    
+  })
+);
+---
+app.use(express.json());
 ```
