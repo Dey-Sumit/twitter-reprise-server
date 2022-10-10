@@ -7,13 +7,11 @@ export const me = (req: Request, res: Response) => {
   //   message: "Hello World",
   //   sessionId: req.session.id,
   // });
-  console.log("hit on me");
-
-  console.log("req.user", req.user);
 
   if (!req.user) return res.status(401).json({ user: null });
   return res.status(200).json(req.user);
 };
+
 export const signup = async (req: Request, res: Response) => {
   // TODO : Handle validation
   const { name, username, email, password } = req.body;
@@ -46,6 +44,7 @@ export const signup = async (req: Request, res: Response) => {
 export const login = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", (err, user) => {
     if (err) return res.status(401).json(err);
+    console.log("logging in");
 
     req.login(user, (err) => {
       if (err) throw err; // if any issue while storing the user in the session

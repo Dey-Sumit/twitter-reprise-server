@@ -547,7 +547,7 @@ UserSchema.set("toJSON", {
       res.status(201).json(req.user);
    });
 
-CHECK IF THE COOKIE IS ADDED OR NOT 🔥E
+CHECK IF THE COOKIE IS ADDED OR NOT 🔥 SHOW in DB that one document is created
 ```
 
 ```
@@ -569,8 +569,27 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
 
 
 # Add mongo Store to persist session in the database
+Problem : If you (kill the session and , try this later ) make a request to /me , it will return null as the session is destroyed , so need to keep persist the session.
+=> OPEN DOCS
 
+``` yarn add connect-mongo ```
+```
+const sessionMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const storeOptions = {
+    mongoUrl: process.env.DB_URI, <== ADD THIS OPTIONS 
+  };
+  const sessionOptions: SessionOptions = {
+    secret: "1213123123", // TODO: secure this
+    resave: false, // if set to true -> it will create a new session for every request, even if the request is coming from the same client, it will create more load in the server
+    saveUninitialized: false, //  if set to true -> it will add cookie to the response even if the user is not authenticated , we will tell express-session to create the cookie using passport, make this false and go to postman and make a request to the server and see the cookie in the response as we are not authenticated
+    store: connectMongo.create(storeOptions), <== CREATE A STORE
+  };
 
+  return session(sessionOptions)(req, res, next);
+};
+```
+
+SHOW IN THE DB that ONE NEW COLLECTION IS CREATED (sessions) and the session is stored in the database
 
 
 
